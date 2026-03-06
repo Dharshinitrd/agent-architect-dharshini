@@ -1,5 +1,1 @@
 streamlit
-langgraph
-langchain-core
-langchain-community
-pyyaml
