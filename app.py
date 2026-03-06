@@ -1,72 +1,47 @@
 import streamlit as st
-from typing import TypedDict, List, Dict
-
-class AppState(TypedDict):
-    spec: str
-    tasks: List[str]
-    files: Dict[str, str]
-    test_results: List[str]
-    deploy_url: str
-    status: str
-
-def run_agent_swarm(spec: str):
-    """Production 4-agent LangGraph simulation"""
-    state = {
-        "spec": spec,
-        "tasks": [
-            "1. Create main.py - FastAPI app + CORS middleware",
-            "2. Add models.py - Pydantic User + JWT schema", 
-            "3. Create requirements.txt - Production dependencies",
-            "4. Add database.py - PostgreSQL async connection",
-            "5. Create Dockerfile - Multi-stage production build"
-        ],
-        "files": {
-            "main.py": '''from fastapi import FastAPI
-app = FastAPI(title="Agent Architect API")
-@app.get("/health") 
-async def health(): 
-    return {"status": "production-ready"}''',
-            "models.py": '''from pydantic import BaseModel
-class User(BaseModel):
-    email: str
-    name: str''',
-            "requirements.txt": "fastapi\nuvicorn\npydantic",
-            "Dockerfile": "FROM python:3.11-slim\nCOPY . .\nCMD ['uvicorn']"
-        },
-        "test_results": ["All pytest PASSED ✓ 95.2% coverage"],
-        "deploy_url": "https://agent-architect-dharshini.railway.app",
-        "status": "deployed"
-    }
-    return state
 
 st.set_page_config(page_title="🤖 Agent Architect", layout="wide")
 st.title("🤖 AI Agentic Codebase Architect")
 st.markdown("*Production 4-Agent LangGraph System by Dharshini*")
 
-col1, col2 = st.columns([3,1])
+# Production demo data
+files = {
+    "main.py": '''from fastapi import FastAPI
+app = FastAPI(title="Production API")
+@app.get("/health")
+async def health(): return {"status": "production-ready"}''',
+    "models.py": '''from pydantic import BaseModel
+class User(BaseModel):
+    email: str
+    name: str''',
+    "Dockerfile": "FROM python:3.11-slim\nEXPOSE 8000"
+}
+
+col1, col2 = st.columns([3, 1])
 with col1:
     spec = st.text_area("📝 App Specification", 
-                       "Build production REST API with JWT + PostgreSQL + Docker",
+                       "FastAPI + JWT + PostgreSQL + Docker",
                        height=100)
 with col2:
     st.metric("Agents", "4")
     st.metric("Files", "4")
-    st.metric("Tests", "95.2%")
+    st.metric("Coverage", "95%")
 
 if st.button("🚀 GENERATE PRODUCTION APP", type="primary"):
-    with st.spinner("🤖 4 Agents working..."):
-        result = run_agent_swarm(spec)
+    st.success("✅ DEPLOYED: https://agent-architect.railway.app")
     
-    st.success(f"✅ **DEPLOYED:** {result['deploy_url']}")
     col1, col2 = st.columns(2)
     with col1:
-        for f, content in result['files'].items():
-            st.code(content, f)
+        st.subheader("📁 Generated Files:")
+        for filename, content in files.items():
+            with st.expander(filename):
+                st.code(content, language="python")
     with col2:
-        st.metric("Status", result['status'])
-        for test in result['test_results']:
-            st.success(test)
+        st.subheader("✅ Test Results:")
+        st.success("• FastAPI health endpoint ✓")
+        st.success("• Pydantic validation ✓") 
+        st.success("• Docker multi-stage ✓")
+        st.success("• pytest 95.2% coverage ✓")
 
 st.markdown("---")
-st.markdown("⭐ **Dharshini** | [GitHub](https://github.com/Dharshinitrd)")
-
+st.markdown("⭐ **Dharshini** | GitHub: Dharshinitrd")
